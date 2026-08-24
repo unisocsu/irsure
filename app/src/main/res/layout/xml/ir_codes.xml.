@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<codes>
+    <protocol name="Gree/Tadiran" id="1">9000,4500,560,560,560,1690,560,560,560,1690</protocol>
+    <protocol name="Samsung AC" id="2">3000,3000,500,1000,500,1000,500,1000,500,500</protocol>
+    <protocol name="LG AC" id="3">8000,4000,500,1500,500,500,500,500,500,1500</protocol>
+    <!-- אפשר להוסיף כאן עד 200 פקודות -->
+</codes>
