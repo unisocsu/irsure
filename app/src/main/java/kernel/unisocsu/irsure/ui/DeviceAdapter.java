@@ -1,7 +1,7 @@
 package kernel.unisocsu.irsure.ui;
 
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +14,7 @@ import kernel.unisocsu.irsure.R;
 import kernel.unisocsu.irsure.models.AcCodeset;
 
 /**
- * NOTE: uses android.support.v7 (old Support Library) to match "API 19+ / simple setup".
- * If your project already migrated to AndroidX, replace the android.support.v7.* and
- * android.support.annotation.NonNull imports with their androidx.* equivalents -
- * the rest of the class is identical either way.
+ * Uses AndroidX (androidx.recyclerview / androidx.annotation).
  */
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder> {
 
