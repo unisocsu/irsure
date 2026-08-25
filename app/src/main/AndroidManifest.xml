@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="kernel.unisocsu.irsure">
+
     <uses-permission android:name="android.permission.TRANSMIT_IR" />
-    <application 
-        android:allowBackup="true" 
-        android:label="IR Sure Scanner" 
-        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
-        <activity android:name=".MainActivity" android:exported="true">
+    <uses-feature
+        android:name="android.hardware.consumerir"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+
+        <activity android:name=".ui.SetupActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.DevicePickerActivity"
+            android:label="@string/app_name" />
+
+        <activity android:name=".ui.RemoteActivity"
+            android:label="@string/app_name" />
+
     </application>
+
 </manifest>

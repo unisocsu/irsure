@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AC Universal Remote</string>
+
+    <!-- SetupActivity -->
+    <string name="setup_initial_status">Preparing…</string>
+    <string name="setup_importing_fmt">Importing %1$d models… (%2$s)</string>
+    <string name="setup_done_fmt">Loaded %1$d AC models, %2$d codes</string>
+    <string name="setup_error_fmt">Import failed: %1$s</string>
+    <string name="setup_error_toast">Failed to load the AC code database</string>
+
+    <!-- DevicePickerActivity -->
+    <string name="picker_search_hint">Search by brand or model…</string>
+
+    <!-- RemoteActivity -->
+    <string name="remote_no_device_selected">No AC model selected</string>
+    <string name="remote_unknown_device">Unknown model</string>
+    <string name="remote_no_ir_blaster">This device has no IR blaster</string>
+    <string name="remote_no_matching_code">No matching code found for this combination</string>
+    <string name="remote_empty_pattern">Stored IR pattern is empty</string>
+    <string name="remote_transmit_failed_fmt">Failed to send IR signal: %1$s</string>
+    <string name="remote_state_fmt">Power: %1$s • Mode: %2$s • %3$d°C • Fan: %4$s • Swing: %5$s</string>
+    <string name="state_on">ON</string>
+    <string name="state_off">OFF</string>
+
+    <string name="btn_power">Power</string>
+    <string name="btn_temp_up">Temp +</string>
+    <string name="btn_temp_down">Temp -</string>
+    <string name="btn_mode_cycle">Change Mode</string>
+    <string name="btn_fan_cycle">Change Fan Speed</string>
+    <string name="btn_swing_toggle">Toggle Swing</string>
+    <string name="btn_change_device">Change AC Model</string>
+</resources>
