@@ -54,8 +54,9 @@
         android:text="התוצאות יופיעו כאן לאחר העצירה:"
         android:textSize="14sp" />
 
-    <ListView
-        android:id="@+id/lvResults"
+    <!-- הוחלף מ-ListView ל-RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvResults"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

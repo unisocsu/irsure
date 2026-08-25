@@ -7,26 +7,33 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import kernel.unisocsu.irsure.R;
 import kernel.unisocsu.irsure.db.DbHelper;
 import kernel.unisocsu.irsure.models.AcCodeset;
 import kernel.unisocsu.irsure.models.AcFunction;
 
 public class ScanActivity extends AppCompatActivity {
+
     private DbHelper dbHelper;
     private ConsumerIrManager irManager;
     private List<AcCodeset> allCodesets;
     private int currentIndex = 0;
     private boolean isScanning = false;
     private Handler scanHandler = new Handler();
-    private TextView tvStatus;
-    private ListView lvResults;
+
+    private TextView tvStatus, tvProgress;
+    private Button btnToggleScan, btnStop;
+    private RecyclerView rvResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,35 +42,49 @@ public class ScanActivity extends AppCompatActivity {
 
         dbHelper = DbHelper.getInstance(this);
         irManager = (ConsumerIrManager) getSystemService(Context.CONSUMER_IR_SERVICE);
+
         tvStatus = findViewById(R.id.tvStatus);
-        lvResults = findViewById(R.id.lvResults);
+        tvProgress = findViewById(R.id.tvProgress);
+        btnToggleScan = findViewById(R.id.btnToggleScan);
+        btnStop = findViewById(R.id.btnStop);
         
+        rvResults = findViewById(R.id.rvResults);
+        rvResults.setLayoutManager(new LinearLayoutManager(this));
+
         allCodesets = dbHelper.searchCodesets(null);
 
-        findViewById(R.id.btnStartScan).setOnClickListener(v -> startScanning());
-        findViewById(R.id.btnStopScan).setOnClickListener(v -> stopAndShowChoices());
+        btnToggleScan.setOnClickListener(v -> {
+            if (!isScanning) startScanning();
+            else isScanning = false;
+        });
+
+        btnStop.setOnClickListener(v -> stopAndShowChoices());
     }
 
     private void startScanning() {
         if (irManager == null || !irManager.hasIrEmitter()) {
-            Toast.makeText(this, "אין עינית IR", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "לא נמצאה עינית IR", Toast.LENGTH_SHORT).show();
             return;
         }
         isScanning = true;
-        currentIndex = 0;
+        btnStop.setVisibility(View.VISIBLE);
         runStep();
     }
 
     private void runStep() {
-        if (!isScanning || currentIndex >= allCodesets.size()) return;
-        
-        AcCodeset codeset = allCodesets.get(currentIndex);
-        tvStatus.setText("בודק קוד " + (currentIndex + 1) + " מתוך " + allCodesets.size());
+        if (!isScanning || currentIndex >= allCodesets.size()) {
+            isScanning = false;
+            return;
+        }
 
-        // שליחת Power ON
-        AcFunction f = dbHelper.findFunction(codeset.getId(), "ON", null, null, null, null);
+        AcCodeset current = allCodesets.get(currentIndex);
+        tvStatus.setText("בודק: " + current.getBrands());
+        tvProgress.setText((currentIndex + 1) + " / " + allCodesets.size());
+
+        // שליחת Power ON - השתמשנו ב-findFunction שמחזיר רק Power
+        AcFunction f = dbHelper.findFunction(current.getId(), "ON", null, null, null, null);
         if (f != null) {
-            irManager.transmit(f.getFreq(), f.getRawPattern());
+            irManager.transmit(f.getFreqHz(), f.getPattern());
         }
 
         currentIndex++;
@@ -72,24 +93,31 @@ public class ScanActivity extends AppCompatActivity {
 
     private void stopAndShowChoices() {
         isScanning = false;
-        // לקיחת חלון של 10 (לרוב לוקח למשתמש זמן להגיב, אז לוקחים קצת אחורה)
-        int start = Math.max(0, currentIndex - 8);
-        int end = Math.min(allCodesets.size(), start + 10);
+        btnStop.setVisibility(View.GONE);
         
+        // יצירת חלון 10
+        int start = Math.max(0, currentIndex - 8);
         List<AcCodeset> window = new ArrayList<>();
-        for (int i = start; i < end; i++) window.add(allCodesets.get(i));
+        for (int i = start; i < Math.min(allCodesets.size(), start + 10); i++) {
+            window.add(allCodesets.get(i));
+        }
 
-        DeviceAdapter adapter = new DeviceAdapter(this, window);
-        lvResults.setAdapter(adapter);
-        lvResults.setVisibility(View.VISIBLE);
-
-        lvResults.setOnItemClickListener((p, v, pos, id) -> {
-            AcCodeset selected = window.get(pos);
+        // שימוש ב-DeviceAdapter המבוסס על RecyclerView
+        DeviceAdapter adapter = new DeviceAdapter(window, codeset -> {
             SharedPreferences.Editor editor = getSharedPreferences("IR_PREFS", MODE_PRIVATE).edit();
-            editor.putLong("SELECTED_ID", selected.getId());
+            editor.putLong("SELECTED_ID", codeset.getId());
             editor.apply();
-            Toast.makeText(this, "השלט נשמר!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ScanActivity.this, "השלט נשמר!", Toast.LENGTH_SHORT).show();
             finish();
         });
+        
+        rvResults.setAdapter(adapter);
+        rvResults.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        scanHandler.removeCallbacksAndMessages(null);
     }
 }
