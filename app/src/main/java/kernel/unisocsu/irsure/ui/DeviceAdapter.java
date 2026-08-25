@@ -29,6 +29,14 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder
         this.listener = listener;
     }
 
+    /** Convenience constructor used by the scan results screen. */
+    public DeviceAdapter(List<AcCodeset> initialItems, OnDeviceClickListener listener) {
+        this.listener = listener;
+        if (initialItems != null) {
+            this.items.addAll(initialItems);
+        }
+    }
+
     /** Replaces the full list (called after each search/filter query). */
     public void submitList(List<AcCodeset> newItems) {
         items.clear();

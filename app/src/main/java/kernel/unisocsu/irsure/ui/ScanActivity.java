@@ -104,8 +104,8 @@ public class ScanActivity extends AppCompatActivity {
 
         // שימוש ב-DeviceAdapter המבוסס על RecyclerView
         DeviceAdapter adapter = new DeviceAdapter(window, codeset -> {
-            SharedPreferences.Editor editor = getSharedPreferences("IR_PREFS", MODE_PRIVATE).edit();
-            editor.putLong("SELECTED_ID", codeset.getId());
+            SharedPreferences.Editor editor = getSharedPreferences(SetupActivity.PREFS_NAME, MODE_PRIVATE).edit();
+            editor.putLong(SetupActivity.KEY_SELECTED_CODESET_ID, codeset.getId());
             editor.apply();
             Toast.makeText(ScanActivity.this, "השלט נשמר!", Toast.LENGTH_SHORT).show();
             finish();
