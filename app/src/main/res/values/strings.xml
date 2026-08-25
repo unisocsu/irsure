@@ -30,4 +30,22 @@
     <string name="btn_fan_cycle">Change Fan Speed</string>
     <string name="btn_swing_toggle">Toggle Swing</string>
     <string name="btn_change_device">Change AC Model</string>
+
+    <string name="btn_schedule">Schedule Action</string>
+    <string name="schedule_title">Schedule action</string>
+    <string name="schedule_action_label">Action</string>
+    <string name="schedule_action_current">Send current state</string>
+    <string name="schedule_action_power_on">Turn ON</string>
+    <string name="schedule_action_power_off">Turn OFF</string>
+    <string name="schedule_delay_label">Run after</string>
+    <string name="schedule_unit_minutes">minutes</string>
+    <string name="schedule_unit_hours">hours</string>
+    <string name="schedule_confirm">Schedule</string>
+    <string name="schedule_cancel_existing">Cancel scheduled</string>
+    <string name="schedule_invalid_delay">Enter a positive delay</string>
+    <string name="schedule_set_fmt">Action scheduled in %1$s</string>
+    <string name="schedule_cancelled">Scheduled action cancelled</string>
+    <string name="scheduled_action_sent">Scheduled IR action sent</string>
+    <string name="scheduled_action_failed">Scheduled IR action failed</string>
+    <string name="scheduled_no_matching_code">No matching code for scheduled action</string>
 </resources>
