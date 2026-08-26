@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.TRANSMIT_IR" />
+
     <uses-feature
         android:name="android.hardware.consumerir"
         android:required="true" />
@@ -13,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
 
-        <activity android:name=".ui.SetupActivity"
+        <activity
+            android:name=".ui.SetupActivity"
             android:label="@string/app_name"
             android:exported="true">
             <intent-filter>
@@ -22,17 +24,27 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.DevicePickerActivity"
+        <activity
+            android:name=".MainActivity"
             android:label="@string/app_name"
             android:exported="false" />
 
-        <activity android:name=".ui.RemoteActivity"
+        <activity
+            android:name=".ui.DevicePickerActivity"
             android:label="@string/app_name"
             android:exported="false" />
 
-        <receiver android:name=".ui.ScheduledActionReceiver" android:exported="false" />
+        <activity
+            android:name=".ui.RemoteActivity"
+            android:label="@string/app_name"
+            android:exported="false" />
 
-        <activity android:name=".ui.ScanActivity"
+        <receiver
+            android:name=".ui.ScheduledActionReceiver"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.ScanActivity"
             android:label="@string/app_name"
             android:exported="false" />
 
