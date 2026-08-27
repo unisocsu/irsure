@@ -1,7 +1,7 @@
 package kernel.unisocsu.irsure.ui;
 
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.ConsumerIrManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,7 +29,7 @@ public class ScanActivity extends AppCompatActivity {
     private List<AcCodeset> allCodesets;
     private int currentIndex = 0;
     private boolean isScanning = false;
-    private final Handler scanHandler = new Handler();
+    private Handler scanHandler = new Handler();
 
     private TextView tvStatus, tvProgress;
     private Button btnToggleScan, btnStop;
@@ -47,16 +47,18 @@ public class ScanActivity extends AppCompatActivity {
         tvProgress = findViewById(R.id.tvProgress);
         btnToggleScan = findViewById(R.id.btnToggleScan);
         btnStop = findViewById(R.id.btnStop);
+
         rvResults = findViewById(R.id.rvResults);
         rvResults.setLayoutManager(new LinearLayoutManager(this));
-        rvResults.setHasFixedSize(true);
-        rvResults.setItemAnimator(null);
 
         allCodesets = dbHelper.searchCodesets(null);
 
         btnToggleScan.setOnClickListener(v -> {
-            if (!isScanning) startScanning();
-            else stopScanning();
+            if (!isScanning) {
+                startScanning();
+            } else {
+                isScanning = false;
+            }
         });
 
         btnStop.setOnClickListener(v -> stopAndShowChoices());
@@ -69,69 +71,84 @@ public class ScanActivity extends AppCompatActivity {
         }
 
         isScanning = true;
-        currentIndex = 0;
         btnStop.setVisibility(View.VISIBLE);
         runStep();
     }
 
     private void runStep() {
-        if (!isScanning) return;
-
-        if (currentIndex >= allCodesets.size()) {
+        if (!isScanning || currentIndex >= allCodesets.size()) {
             isScanning = false;
-            btnStop.setVisibility(View.GONE);
-            tvStatus.setText("הסריקה הסתיימה");
-            tvProgress.setText(allCodesets.size() + " / " + allCodesets.size());
-            stopAndShowChoices();
             return;
         }
 
         AcCodeset current = allCodesets.get(currentIndex);
-        tvStatus.setText("בודק: " + current.getBrands());
-        tvProgress.setText((currentIndex + 1) + " / " + allCodesets.size());
 
-        AcFunction f = dbHelper.findFunction(current.getId(), "ON", null, null, null, null);
-        if (f != null && f.getPattern() != null && !f.getPattern().isEmpty()) {
-            irManager.transmit(f.getFreqHz(), f.getPattern());
+        tvStatus.setText("בודק: " + current.getBrands());
+        tvProgress.setText(
+                (currentIndex + 1) + " / " + allCodesets.size()
+        );
+
+        // שליחת Power ON
+        AcFunction f = dbHelper.findFunction(
+                current.getId(),
+                "ON",
+                null,
+                null,
+                null,
+                null
+        );
+
+        if (f != null && f.getPattern() != null && f.getPattern().length > 0) {
+            irManager.transmit(
+                    f.getFreqHz(),
+                    f.getPattern()
+            );
         }
 
         currentIndex++;
-        scanHandler.postDelayed(this::runStep, 2500L);
-    }
 
-    private void stopScanning() {
-        isScanning = false;
-        scanHandler.removeCallbacksAndMessages(null);
-        btnStop.setVisibility(View.GONE);
+        scanHandler.postDelayed(
+                this::runStep,
+                2500
+        );
     }
 
     private void stopAndShowChoices() {
-        stopScanning();
+        isScanning = false;
+        btnStop.setVisibility(View.GONE);
 
-        if (allCodesets == null || allCodesets.isEmpty()) {
-            Toast.makeText(this, "לא נמצאו דגמים", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
+        // יצירת חלון של עד 10 תוצאות סביב המיקום הנוכחי
         int start = Math.max(0, currentIndex - 8);
+
         List<AcCodeset> window = new ArrayList<>();
-        for (int i = start; i < Math.min(allCodesets.size(), start + 10); i++) {
+
+        for (int i = start;
+             i < Math.min(allCodesets.size(), start + 10);
+             i++) {
             window.add(allCodesets.get(i));
         }
 
         DeviceAdapter adapter = new DeviceAdapter(window, codeset -> {
-            DevicePickerActivity.saveDevice(
+
+            SharedPreferences.Editor editor =
+                    getSharedPreferences(
+                            SetupActivity.PREFS_NAME,
+                            MODE_PRIVATE
+                    ).edit();
+
+            editor.putLong(
+                    SetupActivity.KEY_SELECTED_CODESET_ID,
+                    codeset.getId()
+            );
+
+            editor.apply();
+
+            Toast.makeText(
                     ScanActivity.this,
-                    codeset,
-                    codeset.getDisplayLabel());
+                    "השלט נשמר!",
+                    Toast.LENGTH_SHORT
+            ).show();
 
-            getSharedPreferences(SetupActivity.PREFS_NAME, MODE_PRIVATE)
-                    .edit()
-                    .putLong(SetupActivity.KEY_SELECTED_CODESET_ID, codeset.getId())
-                    .apply();
-
-            Toast.makeText(ScanActivity.this, "השלט נשמר!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(ScanActivity.this, RemoteActivity.class));
             finish();
         });
 
@@ -141,7 +158,7 @@ public class ScanActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        scanHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
+        scanHandler.removeCallbacksAndMessages(null);
     }
 }
