@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <Button
+        android:id="@+id/btn_auto_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="סריקה אוטומטית"
+        android:layout_margin="8dp" />
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_devices"
         android:layout_width="match_parent"
