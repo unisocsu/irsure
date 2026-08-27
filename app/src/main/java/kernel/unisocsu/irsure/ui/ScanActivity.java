@@ -47,18 +47,15 @@ public class ScanActivity extends AppCompatActivity {
         tvProgress = findViewById(R.id.tvProgress);
         btnToggleScan = findViewById(R.id.btnToggleScan);
         btnStop = findViewById(R.id.btnStop);
-
+        
         rvResults = findViewById(R.id.rvResults);
         rvResults.setLayoutManager(new LinearLayoutManager(this));
 
         allCodesets = dbHelper.searchCodesets(null);
 
         btnToggleScan.setOnClickListener(v -> {
-            if (!isScanning) {
-                startScanning();
-            } else {
-                isScanning = false;
-            }
+            if (!isScanning) startScanning();
+            else isScanning = false;
         });
 
         btnStop.setOnClickListener(v -> stopAndShowChoices());
@@ -69,7 +66,6 @@ public class ScanActivity extends AppCompatActivity {
             Toast.makeText(this, "לא נמצאה עינית IR", Toast.LENGTH_SHORT).show();
             return;
         }
-
         isScanning = true;
         btnStop.setVisibility(View.VISIBLE);
         runStep();
@@ -82,76 +78,39 @@ public class ScanActivity extends AppCompatActivity {
         }
 
         AcCodeset current = allCodesets.get(currentIndex);
-
         tvStatus.setText("בודק: " + current.getBrands());
-        tvProgress.setText(
-                (currentIndex + 1) + " / " + allCodesets.size()
-        );
+        tvProgress.setText((currentIndex + 1) + " / " + allCodesets.size());
 
-        // שליחת Power ON
-        AcFunction f = dbHelper.findFunction(
-                current.getId(),
-                "ON",
-                null,
-                null,
-                null,
-                null
-        );
-
-        if (f != null && f.getPattern() != null && f.getPattern().length > 0) {
-            irManager.transmit(
-                    f.getFreqHz(),
-                    f.getPattern()
-            );
+        // שליחת Power ON - השתמשנו ב-findFunction שמחזיר רק Power
+        AcFunction f = dbHelper.findFunction(current.getId(), "ON", null, null, null, null);
+        if (f != null) {
+            irManager.transmit(f.getFreqHz(), f.getPattern());
         }
 
         currentIndex++;
-
-        scanHandler.postDelayed(
-                this::runStep,
-                2500
-        );
+        scanHandler.postDelayed(this::runStep, 2500);
     }
 
     private void stopAndShowChoices() {
         isScanning = false;
         btnStop.setVisibility(View.GONE);
-
-        // יצירת חלון של עד 10 תוצאות סביב המיקום הנוכחי
+        
+        // יצירת חלון 10
         int start = Math.max(0, currentIndex - 8);
-
         List<AcCodeset> window = new ArrayList<>();
-
-        for (int i = start;
-             i < Math.min(allCodesets.size(), start + 10);
-             i++) {
+        for (int i = start; i < Math.min(allCodesets.size(), start + 10); i++) {
             window.add(allCodesets.get(i));
         }
 
+        // שימוש ב-DeviceAdapter המבוסס על RecyclerView
         DeviceAdapter adapter = new DeviceAdapter(window, codeset -> {
-
-            SharedPreferences.Editor editor =
-                    getSharedPreferences(
-                            SetupActivity.PREFS_NAME,
-                            MODE_PRIVATE
-                    ).edit();
-
-            editor.putLong(
-                    SetupActivity.KEY_SELECTED_CODESET_ID,
-                    codeset.getId()
-            );
-
+            SharedPreferences.Editor editor = getSharedPreferences(SetupActivity.PREFS_NAME, MODE_PRIVATE).edit();
+            editor.putLong(SetupActivity.KEY_SELECTED_CODESET_ID, codeset.getId());
             editor.apply();
-
-            Toast.makeText(
-                    ScanActivity.this,
-                    "השלט נשמר!",
-                    Toast.LENGTH_SHORT
-            ).show();
-
+            Toast.makeText(ScanActivity.this, "השלט נשמר!", Toast.LENGTH_SHORT).show();
             finish();
         });
-
+        
         rvResults.setAdapter(adapter);
         rvResults.setVisibility(View.VISIBLE);
     }
