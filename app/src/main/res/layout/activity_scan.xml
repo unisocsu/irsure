@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="×ž×•×›×Ÿ ×œ×¡×¨×™×§×ª ×©×œ×˜×™×..."
+        android:text="îåëï ìñøé÷ú îæâðéí..."
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -27,6 +27,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="æîï äîúðä (ms):" />
+        <EditText
+            android:id="@+id/etDelay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="2500" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_marginTop="20dp">
 
         <Button
@@ -34,14 +52,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="×”×ª×—×œ ×¡×¨×™×§×”" />
+            android:text="äúçì ñøé÷ä" />
 
         <Button
             android:id="@+id/btnStop"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="×¢×¦×•×¨ (×–×” ×”×’×™×‘!)"
+            android:text="òöåø (æä äâéá!)"
             android:backgroundTint="#FF5722"
             android:textColor="#FFFFFF"
             android:visibility="gone" />
@@ -51,10 +69,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="×”×ª×•×¦××•×ª ×™×•×¤×™×¢×• ×›××Ÿ ×œ××—×¨ ×”×¢×¦×™×¨×”:"
+        android:text="äúåöàåú éåôéòå ëàï ìàçø äòöéøä:"
         android:textSize="14sp" />
 
-    <!-- ×”×•×—×œ×£ ×ž-ListView ×œ-RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResults"
         android:layout_width="match_parent"

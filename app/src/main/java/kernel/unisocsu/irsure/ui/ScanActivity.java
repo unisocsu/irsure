@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,7 @@ public class ScanActivity extends AppCompatActivity {
     private TextView tvStatus, tvProgress;
     private Button btnToggleScan, btnStop;
     private RecyclerView rvResults;
+    private EditText etDelay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,8 @@ public class ScanActivity extends AppCompatActivity {
         tvProgress = findViewById(R.id.tvProgress);
         btnToggleScan = findViewById(R.id.btnToggleScan);
         btnStop = findViewById(R.id.btnStop);
-        
+        etDelay = findViewById(R.id.etDelay);
+
         rvResults = findViewById(R.id.rvResults);
         rvResults.setLayoutManager(new LinearLayoutManager(this));
 
@@ -63,10 +66,12 @@ public class ScanActivity extends AppCompatActivity {
 
     private void startScanning() {
         if (irManager == null || !irManager.hasIrEmitter()) {
-            Toast.makeText(this, "לא נמצאה עינית IR", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "�� ����� ����� IR", Toast.LENGTH_SHORT).show();
             return;
         }
         isScanning = true;
+        btnToggleScan.setEnabled(false);
+        etDelay.setEnabled(false);
         btnStop.setVisibility(View.VISIBLE);
         runStep();
     }
@@ -74,43 +79,52 @@ public class ScanActivity extends AppCompatActivity {
     private void runStep() {
         if (!isScanning || currentIndex >= allCodesets.size()) {
             isScanning = false;
+            btnToggleScan.setEnabled(true);
+            etDelay.setEnabled(true);
             return;
         }
 
         AcCodeset current = allCodesets.get(currentIndex);
-        tvStatus.setText("בודק: " + current.getBrands());
+        tvStatus.setText("����: " + current.getBrands());
         tvProgress.setText((currentIndex + 1) + " / " + allCodesets.size());
 
-        // שליחת Power ON - השתמשנו ב-findFunction שמחזיר רק Power
         AcFunction f = dbHelper.findFunction(current.getId(), "ON", null, null, null, null);
         if (f != null) {
             irManager.transmit(f.getFreqHz(), f.getPattern());
         }
 
         currentIndex++;
-        scanHandler.postDelayed(this::runStep, 2500);
+        
+        long delay = 2500;
+        try {
+            delay = Long.parseLong(etDelay.getText().toString());
+        } catch (NumberFormatException e) {
+            // keep default
+        }
+        
+        scanHandler.postDelayed(this::runStep, delay);
     }
 
     private void stopAndShowChoices() {
         isScanning = false;
+        btnToggleScan.setEnabled(true);
+        etDelay.setEnabled(true);
         btnStop.setVisibility(View.GONE);
-        
-        // יצירת חלון 10
+
         int start = Math.max(0, currentIndex - 8);
         List<AcCodeset> window = new ArrayList<>();
         for (int i = start; i < Math.min(allCodesets.size(), start + 10); i++) {
             window.add(allCodesets.get(i));
         }
 
-        // שימוש ב-DeviceAdapter המבוסס על RecyclerView
         DeviceAdapter adapter = new DeviceAdapter(window, codeset -> {
             SharedPreferences.Editor editor = getSharedPreferences(SetupActivity.PREFS_NAME, MODE_PRIVATE).edit();
             editor.putLong(SetupActivity.KEY_SELECTED_CODESET_ID, codeset.getId());
             editor.apply();
-            Toast.makeText(ScanActivity.this, "השלט נשמר!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ScanActivity.this, "����� ����!", Toast.LENGTH_LONG).show();
             finish();
         });
-        
+
         rvResults.setAdapter(adapter);
         rvResults.setVisibility(View.VISIBLE);
     }
