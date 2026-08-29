@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <androidx.recyclerview.widget.RecyclerView
+    <ListView
         android:id="@+id/rvScheduleList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -15,6 +15,6 @@
         android:id="@+id/btnAddSchedule"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="äåñó úæîåï çãù" />
+        android:text="×”×•×¡×£ ×ª×–×ž×•×Ÿ ×—×“×©" />
 
 </LinearLayout>
