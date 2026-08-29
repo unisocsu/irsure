@@ -41,7 +41,6 @@ public class RemoteActivity extends AppCompatActivity {
 
     private TextView titleView;
     private TextView stateView;
-    private static final int SCHEDULE_REQUEST_CODE = 9142;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +67,6 @@ public class RemoteActivity extends AppCompatActivity {
 
         if (irManager == null || !irManager.hasIrEmitter()) {
             Toast.makeText(this, R.string.remote_no_ir_blaster, Toast.LENGTH_LONG).show();
-            // Screen still works for browsing state; transmit() calls below will just no-op with a toast.
         }
 
         setupButtons();
@@ -121,109 +119,14 @@ public class RemoteActivity extends AppCompatActivity {
             if (isOn) sendCurrentState();
         });
 
-        btnSchedule.setOnClickListener(v -> showScheduleDialog());
+        // Open the new ScheduleListActivity instead of old single-action dialog
+        btnSchedule.setOnClickListener(v -> {
+            startActivity(new Intent(this, ScheduleListActivity.class));
+        });
 
         btnChangeDevice.setOnClickListener(v -> {
             startActivity(new android.content.Intent(this, DevicePickerActivity.class));
         });
-    }
-
-    private void showScheduleDialog() {
-        final View view = getLayoutInflater().inflate(R.layout.dialog_schedule, null);
-        final Spinner actionSpinner = view.findViewById(R.id.spinner_schedule_action);
-        final Spinner unitSpinner = view.findViewById(R.id.spinner_schedule_unit);
-        final EditText delayEdit = view.findViewById(R.id.edit_schedule_delay);
-
-        String[] actions = {
-                getString(R.string.schedule_action_current),
-                getString(R.string.schedule_action_power_on),
-                getString(R.string.schedule_action_power_off)
-        };
-        String[] units = {
-                getString(R.string.schedule_unit_minutes),
-                getString(R.string.schedule_unit_hours)
-        };
-
-        actionSpinner.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_dropdown_item, actions));
-        unitSpinner.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_dropdown_item, units));
-
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.schedule_title)
-                .setView(view)
-                .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(R.string.schedule_confirm, (dialog, which) -> {
-                    scheduleAction(actionSpinner.getSelectedItemPosition(),
-                            unitSpinner.getSelectedItemPosition(), delayEdit.getText().toString());
-                })
-                .setNeutralButton(R.string.schedule_cancel_existing, (dialog, which) -> cancelScheduledAction())
-                .show();
-    }
-
-    private void scheduleAction(int action, int unit, String delayText) {
-        long delay;
-        try {
-            delay = Long.parseLong(delayText.trim());
-        } catch (Exception e) {
-            Toast.makeText(this, R.string.schedule_invalid_delay, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (delay <= 0) {
-            Toast.makeText(this, R.string.schedule_invalid_delay, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        long delayMillis = unit == 0 ? delay * 60L * 1000L : delay * 60L * 60L * 1000L;
-
-        String power = isOn ? "ON" : "OFF";
-        String mode = isOn ? MODES[modeIndex] : null;
-        Integer tempValue = isOn ? temp : null;
-        String fan = isOn ? FAN_SPEEDS[fanIndex] : null;
-        String swing = isOn ? (swingOn ? "ON" : "OFF") : null;
-
-        if (action == 1) {
-            power = "ON";
-            mode = MODES[modeIndex];
-            tempValue = temp;
-            fan = FAN_SPEEDS[fanIndex];
-            swing = swingOn ? "ON" : "OFF";
-        } else if (action == 2) {
-            power = "OFF";
-            mode = null;
-            tempValue = null;
-            fan = null;
-            swing = null;
-        }
-
-        Intent intent = new Intent(this, ScheduledActionReceiver.class);
-        intent.putExtra(ScheduledActionReceiver.EXTRA_CODESET_ID, codesetId);
-        intent.putExtra(ScheduledActionReceiver.EXTRA_POWER, power);
-        if (mode != null) intent.putExtra(ScheduledActionReceiver.EXTRA_MODE, mode);
-        if (tempValue != null) intent.putExtra(ScheduledActionReceiver.EXTRA_TEMP, tempValue);
-        if (fan != null) intent.putExtra(ScheduledActionReceiver.EXTRA_FAN, fan);
-        if (swing != null) intent.putExtra(ScheduledActionReceiver.EXTRA_SWING, swing);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, SCHEDULE_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if (alarmManager != null) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayMillis, pendingIntent);
-            Toast.makeText(this, getString(R.string.schedule_set_fmt, formatDelay(delay, unit)), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private String formatDelay(long delay, int unit) {
-        if (unit == 0) return delay + " " + getString(R.string.schedule_unit_minutes);
-        return delay + " " + getString(R.string.schedule_unit_hours);
-    }
-
-    private void cancelScheduledAction() {
-        Intent intent = new Intent(this, ScheduledActionReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, SCHEDULE_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if (alarmManager != null) alarmManager.cancel(pendingIntent);
-        pendingIntent.cancel();
-        Toast.makeText(this, R.string.schedule_cancelled, Toast.LENGTH_SHORT).show();
     }
 
     private void refreshStateLabel() {
@@ -234,7 +137,6 @@ public class RemoteActivity extends AppCompatActivity {
         stateView.setText(state);
     }
 
-    /** Looks up the matching (or closest) AcFunction for the current state and transmits it. */
     private void sendCurrentState() {
         String power = isOn ? "ON" : "OFF";
         String mode = isOn ? MODES[modeIndex] : null;
