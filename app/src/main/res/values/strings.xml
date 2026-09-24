@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AC Universal Remote</string>
-
-    <!-- SetupActivity -->
     <string name="setup_initial_status">Preparing…</string>
     <string name="setup_importing_fmt">Importing %1$d models… (%2$s)</string>
     <string name="setup_done_fmt">Loaded %1$d AC models, %2$d codes</string>
     <string name="setup_error_fmt">Import failed: %1$s</string>
     <string name="setup_error_toast">Failed to load the AC code database</string>
-
-    <!-- DevicePickerActivity -->
     <string name="picker_search_hint">Search by brand or model…</string>
 
-    <!-- RemoteActivity -->
     <string name="remote_no_device_selected">No AC model selected</string>
     <string name="remote_unknown_device">Unknown model</string>
     <string name="remote_no_ir_blaster">This device has no IR blaster</string>
@@ -33,6 +28,8 @@
 
     <string name="btn_schedule">Schedule Action</string>
     <string name="schedule_title">Schedule action</string>
+    <string name="schedule_list_title">Schedules</string>
+    <string name="schedule_editor_title">Add schedule</string>
     <string name="schedule_action_label">Action</string>
     <string name="schedule_action_current">Send current state</string>
     <string name="schedule_action_power_on">Turn ON</string>
