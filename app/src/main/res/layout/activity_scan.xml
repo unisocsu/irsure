@@ -3,81 +3,100 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center_horizontal"
-    android:background="#F5F5F5">
+    android:padding="18dp"
+    android:background="#F7F9FC">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="סריקת מזגן"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#172033"
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/tvStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="מוכן לסריקת מזגנים..."
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:text="מוכן לסריקה..."
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tvProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0 / 226"
-        android:layout_marginTop="8dp" />
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:text="0 / 0"
+        android:textSize="14sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="זמן המתנה לכל מזגן"
+        android:textStyle="bold"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/etDelay"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="6dp"
+        android:hint="לדוגמה: 2500"
+        android:inputType="number"
+        android:text="2500"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="הערך במילישניות. למשל 2500 = 2.5 שניות"
+        android:textSize="12sp"
+        android:textColor="#667085" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:gravity="center_vertical">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="זמן המתנה (ms):" />
-        <EditText
-            android:id="@+id/etDelay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="2500" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="18dp">
 
         <Button
             android:id="@+id/btnToggleScan"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            android:text="התחל סריקה" />
+            android:text="התחל סריקה"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnStop"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="56dp"
             android:layout_weight="1"
-            android:text="עצור (זה הגיב!)"
-            android:backgroundTint="#FF5722"
-            android:textColor="#FFFFFF"
+            android:layout_marginStart="8dp"
+            android:text="מצאתי! עצור"
             android:visibility="gone" />
     </LinearLayout>
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="התוצאות יופיעו כאן לאחר העצירה:"
-        android:textSize="14sp" />
+        android:layout_marginTop="18dp"
+        android:text="מזגנים שנבדקו לאחרונה"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvResults"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="6dp"
         android:visibility="gone" />
-
 </LinearLayout>
