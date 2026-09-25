@@ -14,10 +14,18 @@
 
     <TextView
         android:id="@+id/text_setup_status"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:text="@string/setup_initial_status" />
+
+    <Button
+        android:id="@+id/btn_setup_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Retry"
+        android:visibility="gone" />
 
 </LinearLayout>
