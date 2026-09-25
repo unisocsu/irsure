@@ -2,27 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/pp_background"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="בחר את המזגן"
+        android:textColor="@color/pp_text"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="חפש לפי יצרן או דגם, או הפעל סריקה אוטומטית"
+        android:textColor="@color/pp_text_secondary"
+        android:textSize="14sp"
+        android:paddingBottom="14dp" />
 
     <Button
         android:id="@+id/btn_auto_scan"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:text="סריקה אוטומטית"
-        android:layout_margin="8dp" />
+        android:textStyle="bold" />
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/search_devices"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
         android:iconifiedByDefault="false"
         android:queryHint="@string/picker_search_hint"
-        android:padding="8dp" />
+        android:background="@color/pp_surface"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_devices"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
-
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
 </LinearLayout>
